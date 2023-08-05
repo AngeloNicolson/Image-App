@@ -11,11 +11,18 @@ let aboutWindow
 function createMainWindow() {
   mainWindow = new BrowserWindow({
     title: 'Image-App',
-    width: 700,
+    width: isDev ? 777 : 500,
     height: 600,
     resizeable: isDev ? true : false,
     backgroundColor: 'grey',
+    webPreferences: {
+      nodeIntegration: true, // Integrates node with the renderer
+    },
   })
+
+  if (isDev) {
+    mainWindow.webContents.openDevTools()
+  }
 
   mainWindow.loadFile('./App/index.html')
 }

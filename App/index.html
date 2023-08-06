@@ -43,7 +43,25 @@
                 <script src='js/materialize.min.js'></script>
                 <script>
                     const path = require('path')
-                    const path = require('os')
+                    const os = require('os')
+
+                    const form = document.getElementById('image-form')
+                    const slider = document.getElementById('slider')
+                    const img = document.getElementById('img')
+
+                    document.getElementById('output-path').innerText = path.join(os.homedir(), 'shrinkage')
+
+                    // Onsubmit
+                    form.addEventListener('submit', e => {
+                        e.preventDefault()
+                        // Electron actually adds a pathproperty to file objects
+                        // so that you can get the real path from the input.
+                        const imgPath = img.files[0].path
+                        const quality = slider.value
+
+                        console.log(imgPath, quality)
+
+                    })
                 </script>
         </form>
     </div>

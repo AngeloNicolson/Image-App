@@ -17,6 +17,9 @@ function createMainWindow() {
     backgroundColor: 'grey',
     webPreferences: {
       nodeIntegration: true, // Integrates node with the renderer
+      // In the updated electron api This is requred to be set to false for require()
+      // to work in the renderer proccess
+      contextIsolation: false,
     },
   })
 

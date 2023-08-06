@@ -2,10 +2,11 @@
   "name": "Image-app",
   "version": "1.0.0",
   "description": "App to manipulate images",
-  "main": "main.js",
+  "main": "main_esm.js",
+  "type": "modules",
   "scripts": {
     "start": "electron .",
-    "dev": "nodemon --exec electron"
+    "dev": "nodemon --exec electron ."
   },
   "devDependencies": {
     "electron": "^25.4.0",
@@ -13,5 +14,11 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "imagemin": "^8.0.1",
+    "imagemin-mozjpeg": "^10.0.0",
+    "imagemin-pngquant": "^9.0.2",
+    "slash": "^5.1.0"
+  }
 }

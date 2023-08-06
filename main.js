@@ -1,4 +1,13 @@
-const { app, BrowserWindow, Menu, ipcMain } = require('electron')
+const path = require('path')
+const os = require('os')
+import { app, BrowserWindow, ipcMain, Menu } from 'electron'
+
+// These have to be imported with the esm package as they electron does not support ES modules out of the box.
+// If this is implemented then this will need ot change https://github.com/electron/electron/issues/21457
+const imagemin = require('esm')({ module: 'imagemin' })
+const imageminMozjpeg = require('esm')({ module: 'imageminMozjpeg' })
+const imageminPngquant = require('esm')({ module: 'imagemin-pngquant' })
+const slash = require('esm')({ module: 'slash' })
 
 process.env.NODE_ENV = 'development'
 
@@ -92,8 +101,9 @@ const menu = [
 ]
 
 // This catches the event from the renderer
-ipcMain.on('image:minimize', (_e, options) => {
-  console.log(options)
+ipcMain.on('image:minimize', (e, options) => {
+  options.dest = path.join(os.homdir(), 'shrinkage')
+  imageShrink(options)
 })
 
 // If user is on mac then the app will fully quit and not runn in the background

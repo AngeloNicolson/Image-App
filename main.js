@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron')
+const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 
 process.env.NODE_ENV = 'development'
 
@@ -90,6 +90,12 @@ const menu = [
       ]
     : []),
 ]
+
+// This catches the event from the renderer
+ipcMain.on('image:minimize', (_e, options) => {
+  console.log(options)
+})
+
 // If user is on mac then the app will fully quit and not runn in the background
 app.on('window-all-closed', () => {
   if (isMac) {

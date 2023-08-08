@@ -53,7 +53,7 @@
                     document.getElementById('output-path').innerText = path.join(os.homedir(), 'shrinkage')
 
                     // Onsubmit
-                    form.addEventListener('submit', e => {
+                    form.addEventListener('submit', (e) => {
                         e.preventDefault()
                         // Electron actually adds a pathproperty to file objects
                         // so that you can get the real path from the input.
@@ -61,10 +61,15 @@
                         const quality = slider.value
 
                         ipcRenderer.send('image:minimize', { // This sends the info to the main process from the renderer (this)
-                            imagePath,
+                            imgPath,
                             quality,
                         })
-
+                        // Recieve the done message from the main process
+                        ipcRenderer.on('image:done', () => {
+                            M.toast({
+                                html: `Image resized to ${slider.value}% quality`,
+                            })
+                        })
                     })
                 </script>
         </form>

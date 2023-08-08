@@ -1,6 +1,6 @@
 const path = require('path')
 const os = require('os')
-import { app, BrowserWindow, ipcMain, Menu } from 'electron'
+import { app, BrowserWindow, ipcMain, Menu, shell } from 'electron'
 
 // These have to be imported with the esm package as they electron does not support ES modules out of the box.
 // If this is implemented then this will need ot change https://github.com/electron/electron/issues/21457
@@ -102,9 +102,37 @@ const menu = [
 
 // This catches the event from the renderer
 ipcMain.on('image:minimize', (e, options) => {
-  options.dest = path.join(os.homdir(), 'shrinkage')
+  options.dest = path.join(os.homedir(), 'shrinkage') // Adding a destination to the options object for saved images
   imageShrink(options)
 })
+
+// This is really frustrating. Electron does n ot support ES modules and have been lagging behind in implementing it.
+// TODO: Will have to look at ways around the modules situation to get the imagemin working in electron without downgrading.
+const imageShrink = async ({ imgPath, quality, dest }) => {
+  const pngQuality = quality / 100
+
+  console.log(imgPath)
+  try {
+    const files = await imagemin([slash(imgPath)], {
+      destination: String(dest),
+      plugins: [
+        imageminMozjpeg({ quality }),
+        imageminPngquant({
+          quality: [pngQuality, pngQuality],
+        }),
+      ],
+    })
+    console.log(files)
+
+    shell.openItem(dest)
+
+    // Send a notice to the renderer that the image has been resized
+    mainWindow.webContents.send('image:done')
+  } catch (err) {
+    console.error('ImageShrink error:', err.message)
+    // You can handle the error here, for example, show an error message to the user.
+  }
+}
 
 // If user is on mac then the app will fully quit and not runn in the background
 app.on('window-all-closed', () => {
